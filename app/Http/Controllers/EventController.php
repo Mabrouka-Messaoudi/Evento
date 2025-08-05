@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Category;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
@@ -12,16 +12,19 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $events = Event::query()->paginate(1);
+        return view('event.index',compact('events'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        //
-    }
+{
+    $event = new Event();
+    $categories = Category::all();  // fetch all categories
+    return view('event.create', compact('event', 'categories'));
+}
 
     /**
      * Store a newly created resource in storage.

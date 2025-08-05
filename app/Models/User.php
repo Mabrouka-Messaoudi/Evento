@@ -18,10 +18,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    'nom',
+    'prenom',
+    'telephone',
+    'email',
+    'password',
+    'adresse',
+    'role',
+];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,4 +49,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function events() {
+    return $this->hasMany(Event::class, 'organisateur_id');
+}
+
+public function reservations() {
+    return $this->hasMany(Reservation::class, 'participant_id');
+}
+// You might want a helper method to check role easily
+public function isAdmin() {
+    return $this->role === 'admin';
+}
+
+public function isOrganisateur() {
+    return $this->role === 'organisateur';
+}
+
+public function isParticipant() {
+    return $this->role === 'participant';
+}
+
 }
