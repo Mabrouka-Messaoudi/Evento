@@ -3,11 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AdminController;
+use App\Models\Event;
 // Default home page
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [AdminController::class, 'home'])->name('home');
 
 // Dashboard (generic fallback)
 Route::get('/dashboard', function () {
@@ -18,26 +17,53 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth'])->group(function () {
 
     // Admin Dashboard
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminController::class, 'adminDashboard'])->name('admin.dashboard');
+    Route::post('/admin/categories', [AdminController::class, 'store'])->name('admin.categories.store');
+    Route::delete('/admin/category/{category}', [AdminController::class, 'destroyCategories'])->name('admin.categories.destroy');
+    Route::put('/admin/categories/{category}', [AdminController::class, 'update'])->name('admin.categories.update');
+    Route::get('/categories/{category}/edit', [AdminController::class, 'edit'])->name('admin.categories.edit');
+    Route::get('/users/{user}', [AdminController::class, 'show'])->name('admin.users.show');
+    Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('organisateur.events.edit');
+    Route::put('/organisateur/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('organisateur.events.destroy');
 
-    // Organisateur Dashboard (Create Event Page)
-    Route::get('/organisateur/dashboard',function(){
-         return view('organisateur.dashboard');
-    })->name('organisateur.dashboard');
+    Route::get('/participant/dashboard', function () {
+         $events = Event::all();
+        return view('participant.dashboard', ['events' => $events]);
+    })->name('participant.dashboard');
+   Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+   Route::get('/events/{id}/participer', [EventController::class, 'participer'])->name('events.participer');
 
 
     // Participant Dashboard
-    Route::get('/participant/dashboard', function () {
-        return view('participant.dashboard');
-    })->name('participant.dashboard');
+
 
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/organisateur/dashboard', [EventController::class, 'index'])->name('organisateur.dashboard');
+    Route::post('/admin/events', [EventController::class, 'store'])->name('organisateur.events.store');
+
+});
+Route::prefix('admin')->name('admin.')->group(function () {
+
+    Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
+});
+
+     Route::get('/about',function(){
+              return view('home.nav-about');
+     });
+     Route::get('/evenements',function(){
+              $events = Event::all();
+    return view('home.nav-events', ['events' => $events]);
+});
+    // Organisateur Dashboard (Create Event Page)
+    Route::get('/organisateur/dashboard',function(){
+         return view('organisateur.dashboard');
+    })->name('organisateur.dashboard');
 
 // Load auth routes
 require __DIR__.'/auth.php';

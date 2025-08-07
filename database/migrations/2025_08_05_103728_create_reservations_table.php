@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('participant_id')->constrained('users')->onDelete('cascade');
             $table->enum('statut', ['en_attente', 'accepté', 'refusé'])->default('en_attente');
-            $table->string('qr_code')->nullable();
+
             $table->timestamps();
         });
     }
