@@ -9,7 +9,6 @@
 Lancé pour répondre aux besoins des organisateurs et participants modernes, notre site offre une solution complète pour la gestion d’événements en ligne. Que vous soyez un professionnel, un étudiant ou un passionné, vous trouverez ici des événements adaptés à vos intérêts.
 
 Grâce à notre système de réservation intuitif et à notre interface conviviale, rejoindre un événement n’a jamais été aussi simple. Rejoignez notre communauté et ne manquez plus aucune opportunité d'apprentissage ou de networking !</p>
-                     <a class="read_more" href="Javascript:void(0)"> Read More</a>
                   </div>
                </div>
                <div class="col-md-7">

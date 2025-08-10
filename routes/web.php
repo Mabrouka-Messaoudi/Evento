@@ -4,7 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReservationController;
 use App\Models\Event;
+use App\Models\Reservation;
 // Default home page
 Route::get('/', [AdminController::class, 'home'])->name('home');
 
@@ -26,14 +28,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('organisateur.events.edit');
     Route::put('/organisateur/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('organisateur.events.destroy');
+    Route::put('/organisateur/reservations/{event}', [ReservationController::class, 'update'])->name('reservations.update');
+    Route::get('/organisateur/events/creer', [EventController::class, 'createEvent'])
+
+    ->name('organisateur.events.creer');
+    Route::get('/organisateur/reservations', [ReservationController::class, 'index'])
+    ->middleware('auth')
+    ->name('organisateur.reservations.gestion');
 
     Route::get('/participant/dashboard', function () {
          $events = Event::all();
         return view('participant.dashboard', ['events' => $events]);
     })->name('participant.dashboard');
    Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
-   Route::get('/events/{id}/participer', [EventController::class, 'participer'])->name('events.participer');
-
+   Route::post('/reservations/{event}', [ReservationController::class, 'store'])->name('reservations.store');
+   Route::patch('/reservations/{id}', [ReservationController::class, 'update'])->name('reservation.update');
 
     // Participant Dashboard
 
@@ -61,9 +70,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     return view('home.nav-events', ['events' => $events]);
 });
     // Organisateur Dashboard (Create Event Page)
-    Route::get('/organisateur/dashboard',function(){
-         return view('organisateur.dashboard');
-    })->name('organisateur.dashboard');
+    // Route::get('/organisateur/dashboard',function(){
+    //     $events = Event::all();
+    //     $reservations=Reservation::all();
+    //      return view('organisateur.dashboard', ['events' => $events,'reservations' => $reservations]);
+    // })->name('organisateur.dashboard');
+
+Route::middleware('auth')->get('/mes-reservations', [ReservationController::class, 'historique'])->name('participant.reservations.historique');
+
+Route::middleware('auth')->delete('/reservations/{id}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+
 
 // Load auth routes
 require __DIR__.'/auth.php';

@@ -1,27 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Organisateur Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    {{-- Tailwind CSS via CDN (or use Vite if your project is set up that way) --}}
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <title>Evento</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+    <!-- Site Metas -->
+    <title>Evento</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('images/fevicon.png') }}" type="image/gif" />
+
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/jquery.mCustomScrollbar.min.css') }}">
+
+    <!-- Font Awesome for older IEs -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+    <!-- Fancybox -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <!-- Tes autres CSS... -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
 
-        body {
-            display: flex;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
 
         .sidebar {
             width: 250px;
@@ -31,13 +53,11 @@
             height: 100vh;
             position: fixed;
         }
-
         .sidebar h2 {
             margin-bottom: 30px;
             font-size: 20px;
             text-align: center;
         }
-
         .sidebar a {
             display: block;
             color: white;
@@ -47,92 +67,126 @@
             padding: 10px;
             border-radius: 5px;
         }
-
         .sidebar a:hover {
             background-color: #3e3e3a;
         }
-
         .main-content {
-            margin-left: 250px;
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section h3 {
-            margin-bottom: 15px;
-            font-size: 20px;
-            color: #333;
-        }
-
-        .card {
-            background-color: white;
+            margin-left: 270px; /* pour laisser la place à la sidebar */
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-        }
-
-        .card input,
-        .card select,
-        .card textarea,
-        .card button {
-            display: block;
-            margin-top: 10px;
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .reservation-actions button {
-            margin-right: 10px;
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+<header>
+        <!-- Header -->
+<div class="header">
+   <div class="container">
+      <div class="row">
+         <!-- Logo Section -->
+         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+            <div class="full">
+               <div class="center-desk">
+                  <div class="logo">
+                     <a href="{{ route('home') }}"><img src="{{ asset('images/logo.png') }}" width="60" height="60" alt="Logo" /></a>
+                  </div>
+               </div>
+            </div>
+         </div>
 
-    <!-- Navbar (full width) -->
-    <nav class="bg-white shadow fixed w-full z-10 top-0 left-0">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-xl font-bold">Evento</a>
+         <!-- Navigation Section -->
+         <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+            <nav class="navigation navbar navbar-expand-md navbar-dark">
+               <button class="navbar-toggler" type="button" data-toggle="collapse"
+                  data-target="#navbarsExample04" aria-controls="navbarsExample04"
+                  aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+               </button>
 
-            @auth
-                <div class="flex items-center space-x-4">
-                    <span>{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="text-red-500 hover:underline">Déconnexion</button>
-                    </form>
-                </div>
-            @endauth
+               <div class="collapse navbar-collapse" id="navbarsExample04">
+                  <ul class="navbar-nav mr-auto">
+                     <li class="nav-item active">
+                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/about') }}">À propos de nous</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/evenements') }}">Nos Événements</a>
+                     </li>
 
-            @guest
-                <div class="space-x-4">
-                    <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Connexion</a>
-                    <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Inscription</a>
-                </div>
-            @endguest
-        </div>
-    </nav>
+                     {{-- Auth based navigation --}}
+                     @if (Route::has('login'))
+                        @auth
+                           @php
+                              $redirectRoute = '#';
+                              if (Auth::user()->role === 'admin') {
+                                  $redirectRoute = route('admin.dashboard');
+                              } elseif (Auth::user()->role === 'organisateur') {
+                                  $redirectRoute = route('organisateur.dashboard');
+                              } elseif (Auth::user()->role === 'participant') {
+                                  $redirectRoute = route('participant.dashboard');
+                              }
+                           @endphp
+                           <li class="nav-item">
+                              <a class="nav-link" href="{{ $redirectRoute }}">Dashboard</a>
+                           </li>
+                        @else
+                           <li class="nav-item">
+                              <a class="nav-link" href="{{ route('login') }}">Log in</a>
+                           </li>
+                           @if (Route::has('register'))
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ route('register') }}">Register</a>
+                              </li>
+                           @endif
+                        @endauth
+                     @endif
+                  </ul>
 
-    <!-- Sidebar fixed -->
-    <div class="sidebar">
-        <h2>Organisateur</h2>
-        <a href="#events">Mes Événements</a>
-        <a href="#create">Créer un Événement</a>
-        <a href="#reservations">Réservations</a>
-        <a href="{{ route('logout') }}"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnexion</a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-            @csrf
-        </form>
-    </div>
+                  {{-- Username and Logout side by side --}}
+                  @auth
+                     <ul class="navbar-nav ml-auto align-items-center">
+                        <li class="nav-item">
+                           <span class="nav-link" style="color: #000; cursor: default;">
+                              {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
+                           </span>
+                        </li>
+                        <li class="nav-item">
+                           <form method="POST" action="{{ route('logout') }}">
+                              @csrf
+                              <button type="submit" class="btn btn-link nav-link" style="padding: 0; color: #000; text-decoration: underline; cursor: pointer;">
+                                 Déconnexion
+                              </button>
+                           </form>
+                        </li>
+                     </ul>
+                  @endauth
+               </div>
+            </nav>
+         </div>
+      </div>
+   </div>
+   </header>
+<div class="sidebar">
+    <h2>
+        {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
+    </h2>
+    <a href="{{ url('/organisateur/dashboard') }}">Mes Événements</a>
+    <a href="{{ url('/organisateur/events/creer') }}">Créer un Événement</a>
+    <a href="{{ url('/organisateur/reservations') }}">Réservations</a>
+</div>
+
+
     <div class="main-content">
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
         @yield('content')
     </div>
+
 </body>
 </html>

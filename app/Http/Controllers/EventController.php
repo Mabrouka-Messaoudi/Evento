@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Category;
+use App\Models\Reservation;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,10 +12,18 @@ class EventController extends Controller
      * Display a listing of the resource.
      */
  public function index()
-    {
-        $events = Event::with('organisateur', 'categorie')->get();
-        return view('organisateur.dashboard', compact('events'));
-    }
+{
+    $organisateurId = Auth::id();
+
+    $events = Event::where('organisateur_id', $organisateurId)->get();
+
+    $eventIds = $events->pluck('id');
+    $reservations = Reservation::whereIn('event_id', $eventIds)->get();
+
+    return view('organisateur.dashboard', compact('events', 'reservations'));
+}
+
+
 
     // Show the form for creating a new event
     public function create()
@@ -22,6 +31,11 @@ class EventController extends Controller
         $users = User::all();
         $categories = Category::all();
         return view('admin', compact('users', 'categories'));
+    }
+    public function createEvent()
+    {
+
+        return view('organisateur.events.creer');
     }
 
     /**
@@ -69,12 +83,7 @@ class EventController extends Controller
     return view('participant.details', compact('event'));
 }
 
-public function participer($id)
-{
-    $event = Event::findOrFail($id);
-    // Logique pour participation (ex: enregistrer user)
-    return redirect()->back()->with('success', 'Participation enregistrée !');
-}
+
 
 
     /**
