@@ -5,10 +5,12 @@ use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\NotificationController;
 use App\Models\Event;
+use Carbon\Carbon;
 use App\Models\Reservation;
 // Default home page
-Route::get('/', [AdminController::class, 'home'])->name('home');
+Route::get('/', [EventController::class, 'home'])->name('home');
 
 // Dashboard (generic fallback)
 Route::get('/dashboard', function () {
@@ -24,14 +26,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/category/{category}', [AdminController::class, 'destroyCategories'])->name('admin.categories.destroy');
     Route::put('/admin/categories/{category}', [AdminController::class, 'update'])->name('admin.categories.update');
     Route::get('/categories/{category}/edit', [AdminController::class, 'edit'])->name('admin.categories.edit');
-    Route::get('/users/{user}', [AdminController::class, 'show'])->name('admin.users.show');
     Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('organisateur.events.edit');
     Route::put('/organisateur/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('organisateur.events.destroy');
     Route::put('/organisateur/reservations/{event}', [ReservationController::class, 'update'])->name('reservations.update');
     Route::get('/organisateur/events/creer', [EventController::class, 'createEvent'])
-
     ->name('organisateur.events.creer');
+
+    Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('admin.users.show');
+
     Route::get('/organisateur/reservations', [ReservationController::class, 'index'])
     ->middleware('auth')
     ->name('organisateur.reservations.gestion');
@@ -59,16 +62,20 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
+Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
 });
 
      Route::get('/about',function(){
               return view('home.nav-about');
      });
-     Route::get('/evenements',function(){
-              $events = Event::all();
+     Route::get('/evenements', function() {
+    $today = Carbon::now();
+
+    $events = Event::where('date_debut', '>=', $today)->get();
     return view('home.nav-events', ['events' => $events]);
-});
+})->name('home.nav-events');
+Route::get('/participant/dashboard', [EventController::class, 'events'])->name('participant.dashboard');
+
     // Organisateur Dashboard (Create Event Page)
     // Route::get('/organisateur/dashboard',function(){
     //     $events = Event::all();
@@ -80,6 +87,9 @@ Route::middleware('auth')->get('/mes-reservations', [ReservationController::clas
 
 Route::middleware('auth')->delete('/reservations/{id}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/participant/notifications', [NotificationController::class, 'index'])->name('participant.notifications.index');
+});
 
 // Load auth routes
 require __DIR__.'/auth.php';

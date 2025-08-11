@@ -14,47 +14,53 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
-    {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
+    public function edit()
+{
+    $user = auth()->user();
+    return view('profile.edit', compact('user'));
+}
+
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
+    public function update(Request $request)
+{
+    $user = auth()->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+    $request->validate([
+        'prenom' => 'required|string|max:255',
+        'nom' => 'required|string|max:255',
+        'telephone' => 'required|string|max:20',
+        'email' => 'required|email|unique:users,email,'.$user->id,
+        'adresse' => 'required|string|max:255',
+    ]);
 
-        $request->user()->save();
+    $user->update($request->only('prenom', 'nom', 'telephone', 'email', 'adresse'));
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
+    return redirect()->route('profile.edit')->with('success', 'Profil mis à jour avec succès.');
+}
 
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
+    public function destroy(Request $request)
+{
+    $user = auth()->user();
 
-        $user = $request->user();
+    // Optional: Confirm password before deleting (recommended for security)
+    $request->validate([
+        'password' => ['required', 'current_password'],
+    ]);
 
-        Auth::logout();
+    // Log out user before deleting
+    auth()->logout();
 
-        $user->delete();
+    // Delete user record
+    $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    // Redirect to homepage or goodbye page
+    return redirect('/')->with('success', 'Votre compte a été supprimé avec succès.');
+}
 
-        return Redirect::to('/');
-    }
 }

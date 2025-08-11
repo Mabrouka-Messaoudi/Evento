@@ -31,13 +31,7 @@ class ReservationController extends Controller
 
 }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -45,10 +39,8 @@ class ReservationController extends Controller
     public function store(Request $request,  $eventId)
     {
     $participantId = auth()->id();
-    //$eventId = $request->input('event_id');
 
 
-    // Avoid duplicate reservation
     $existing = Reservation::where('event_id', $eventId)
         ->where('participant_id', $participantId)
         ->first();
@@ -65,21 +57,9 @@ class ReservationController extends Controller
     return back()->with('success', 'Participation request sent!');
 }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reservation $reservation)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reservation $reservation)
-    {
-        //
-    }
+
+
 
     /**
      * Update the specified resource in storage.
@@ -87,49 +67,57 @@ class ReservationController extends Controller
     public function update(Request $request, $id)
 {
     $reservation = Reservation::findOrFail($id);
-    $reservation->statut = $request->statut;
-    $reservation->save();
 
+    // On vérifie si le statut demandé est "accepté"
     if ($request->statut == 'accepté') {
         $event = $reservation->event;
 
-        if ($event->capacite > 0) {
+        // On vérifie si la capacité est > 1 (donc au moins 1 place dispo après acceptation)
+        if ($event->capacite > 1) {
+            // On met à jour le statut de la réservation
+            $reservation->statut = $request->statut;
+            $reservation->save();
+
+            // On diminue la capacité d'une place
             $event->capacite -= 1;
             $event->save();
 
-            // QR content
-            $qrContent = "Event: {$event->titre}\nLieu: {$event->lieu}\nDate: {$event->date}";
+            // Contenu du QR code avec date début et date fin
+            $qrContent = "Event: {$event->titre}\nLieu: {$event->lieu}\nDate début: {$event->date_debut}\nDate fin: {$event->date_fin}";
 
-            // Générer le QR code SVG
+            // Génération du QR code SVG
             $qrCodeSvg = QrCode::format('svg')->size(200)->generate($qrContent);
 
-            // Sauvegarder le QR code dans storage
+            // Sauvegarde du QR code dans storage/public/qrcodes
             $fileName = 'qrcode_' . time() . '.svg';
             $filePath = 'qrcodes/' . $fileName;
             Storage::disk('public')->put($filePath, $qrCodeSvg);
 
-            // Enregistrer la notification (si besoin)
             Notification::create([
                 'reservation_id' => $reservation->id,
+                'user_id' => $reservation->participant_id,
                 'qr_code_path' => $filePath,
+                'message' => "Votre réservation pour l'événement '{$event->titre}' a été acceptée.",
             ]);
 
-            // Envoyer le mail avec la pièce jointe, et passer le titre de l'événement
             Mail::to($reservation->participant->email)
                 ->send(new QRCodeMail($filePath, $event->titre));
         } else {
-            return back()->with('error', 'No capacity left for this event.');
+            return back()->with('error', 'Pas assez de places disponibles pour accepter cette réservation.');
         }
+    } else {
+        // Si le statut n'est pas "accepté", on met juste à jour le statut sans modifier la capacité
+        $reservation->statut = $request->statut;
+        $reservation->save();
     }
 
-    return back()->with('success', 'Reservation updated successfully.');
+    return back()->with('success', 'Statut de réservation mis à jour.');
 }
+
 public function historique()
 {
-    // Récupérer l'utilisateur connecté (participant)
     $participant = Auth::user();
 
-    // Récupérer ses réservations avec les infos de l'événement
     $reservations = $participant->reservations()->with('event')->get();
 
     return view('participant.reservations.historique', compact('reservations'));

@@ -83,8 +83,9 @@
     </h2>
     <a href="{{ route('participant.dashboard') }}">Les Événements</a>
     <a href="{{ route('participant.reservations.historique') }}">Mes Réservations</a>
-
+    <a href="{{ route('participant.notifications.index') }}">Notifications</a>
 </div>
+
 
 
     <div class="main-content">

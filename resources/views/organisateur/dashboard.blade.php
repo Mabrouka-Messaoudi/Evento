@@ -1,6 +1,6 @@
 @extends('organisateur.base')
 @section('content')
-@section('content')
+
 <div class="our_room">
   <div class="container">
     <!-- Section Mes Événements -->
@@ -34,18 +34,13 @@
               </div>
 
               <p><strong>Description:</strong> {{ $event->description }}</p>
-              <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->date)->format('d M Y H:i') }}</p>
+              <p>
+                <strong>Date début:</strong> {{ \Carbon\Carbon::parse($event->date_debut)->format('d M Y H:i') }}<br>
+                <strong>Date fin:</strong> {{ \Carbon\Carbon::parse($event->date_fin)->format('d M Y H:i') }}
+              </p>
               <p><strong>Lieu:</strong> {{ $event->lieu }}</p>
               <p><strong>Capacité:</strong> {{ $event->capacite }}</p>
-              <p><strong>Statut:</strong>
-                @if($event->statut === 'publié')
-                  <span class="text-success fw-bold">Publié</span>
-                @else
-                  <span class="text-warning fw-bold">Brouillon</span>
-                @endif
-              </p>
-              <p><strong>Catégorie ID:</strong> {{ $event->categorie_id }}</p>
-              <p><strong>Organisateur ID:</strong> {{ $event->organisateur_id }}</p>
+              <p><strong>Catégorie:</strong> {{ $event->categorie->nom ?? 'N/A' }}</p>
 
               <form action="{{ route('organisateur.events.edit', $event->id) }}" method="GET" class="mb-2">
                 <button type="submit" class="btn btn-primary btn-sm w-100">Modifier</button>
@@ -62,9 +57,7 @@
       </div>
     @endif
 
-
     <!-- Section Réservations -->
-
 
   </div>
 </div>

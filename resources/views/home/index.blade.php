@@ -22,7 +22,7 @@
       <!-- about -->
       @include('home.about')
       <!-- end about -->
-      <!-- our_room -->
       @include('home.event', ['events' => $events])
+
 
       @include('home.footer')

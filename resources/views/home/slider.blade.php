@@ -29,33 +29,32 @@
       </a>
    </div>
 
-   @auth
-    @if(Auth::user()->role === 'participant')
-        <div class="booking_ocline">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="book_room">
-                            <h1>PARTICIPER A UN EVENEMENT</h1>
-                            <form class="book_now" action="{{ route('participant.dashboard') }}" method="GET">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <!-- champs éventuels -->
-                                    </div>
-                                    <div class="col-md-12">
-                                        <!-- champs éventuels -->
-                                    </div>
-                                    <div class="col-md-12">
-                                        <button class="book_btn" type="submit">Réserver</button>
-                                    </div>
+   @if(!Auth::check() || (Auth::check() && Auth::user()->role === 'participant'))
+    <div class="booking_ocline">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="book_room">
+                        <h1>PARTICIPER A UN EVENEMENT</h1>
+                        <form class="book_now" action="{{ route('participant.dashboard') }}" method="GET">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- champs éventuels -->
                                 </div>
-                            </form>
-                        </div>
+                                <div class="col-md-12">
+                                    <!-- champs éventuels -->
+                                </div>
+                                <div class="col-md-12">
+                                    <button class="book_btn" type="submit">Réserver</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    @endif
-@endauth
+    </div>
+@endif
+
 
 </section>

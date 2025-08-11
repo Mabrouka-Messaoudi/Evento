@@ -6,6 +6,7 @@ use App\Models\Reservation;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 class EventController extends Controller
 {
     /**
@@ -25,13 +26,7 @@ class EventController extends Controller
 
 
 
-    // Show the form for creating a new event
-    public function create()
-    {
-        $users = User::all();
-        $categories = Category::all();
-        return view('admin', compact('users', 'categories'));
-    }
+
     public function createEvent()
     {
 
@@ -46,10 +41,10 @@ class EventController extends Controller
     $validated = $request->validate([
         'titre' => 'required|string|max:255',
         'description' => 'required|string',
-        'date' => 'required|date',
+        'date_debut' => 'required|date',
+        'date_fin' => 'required|date',
         'lieu' => 'required|string|max:255',
         'capacite' => 'required|integer|min:1',
-        'statut' => 'required|in:publié,brouillon',
         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:6000',
         'categorie_id' => 'required|exists:categories,id',
     ]);
@@ -61,10 +56,10 @@ class EventController extends Controller
     Event::create([
         'titre' => $validated['titre'],
         'description' => $validated['description'],
-        'date' => $validated['date'],
+        'date_debut' => $validated['date_debut'],
+        'date_fin' => $validated['date_fin'],
         'lieu' => $validated['lieu'],
         'capacite' => $validated['capacite'],
-        'statut' => $validated['statut'],
         'image' => $imagePath,
         'categorie_id' => $validated['categorie_id'],
 
@@ -107,7 +102,7 @@ class EventController extends Controller
         'date' => 'required|date',
         'lieu' => 'required|string',
         'capacite' => 'required|integer|min:1',
-        'statut' => 'required|in:publié,brouillon',
+
         'image' => 'nullable|image|max:2048',
     ]);
 
@@ -130,6 +125,28 @@ class EventController extends Controller
 
         return redirect()->route('organisateur.dashboard')->with('success', 'event supprimé avec succès.');
     }
+    public function events(Request $request)
+{
+    $categories = Category::all();
+    $selectedCategory = $request->categorie_id;
+
+    $eventsQuery = Event::query();
+
+    if ($selectedCategory) {
+        $eventsQuery->where('categorie_id', $selectedCategory);
+    }
+
+    $events = $eventsQuery->get();
+
+    return view('participant.dashboard', compact('events', 'categories', 'selectedCategory'));
+}
+public function home()
+{
+    $today = Carbon::now();
+
+    $events = Event::where('date_debut', '>=', $today)->get();
+   return view('home.index', compact('events'));
+}
 
 
 }

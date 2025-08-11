@@ -6,21 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Event;
+use Carbon\Carbon;
+
 class AdminController extends Controller
 {
     public function adminDashboard()
 {
     $categories = Category::all();
 
-    // Get only users with role 'organisateur' or 'participant'
     $users = User::whereIn('role', ['organisateur', 'participant'])->get();
 
     return view('admin.dashboard', compact('categories', 'users'));
 }
-    public function show(User $user)
+
+    public function showUser(User $user)
     {
         return view('admin.users.show', compact('user'));
     }
+
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();
@@ -62,11 +65,7 @@ public function update(Request $request, Category $category): RedirectResponse
 
     return redirect()->route('admin.dashboard')->with('success', 'Catégorie mise à jour avec succès.');
 }
-public function home()
-{
-   $events = Event::all();
-   return view('home.index', compact('events'));
-}
+
 
 
 

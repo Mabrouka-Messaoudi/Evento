@@ -1,3 +1,5 @@
+
+
 <div class="our_room">
    <div class="container">
       <div class="row">
@@ -22,9 +24,10 @@
                      <h3>{{ $event->titre }}</h3>
                      <p>{{ Str::limit($event->description, 100) }}</p>
                      <p><strong>Lieu:</strong> {{ $event->lieu }}</p>
-                     <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y H:i') }}</p>
-                  </div>
-               </div>
+                    <p><strong>Date de début:</strong> {{ \Carbon\Carbon::parse($event->date_debut)->format('d/m/Y H:i') }}</p>
+                    <p><strong>Date de fin:</strong> {{ \Carbon\Carbon::parse($event->date_fin)->format('d/m/Y H:i') }}</p>
+                </div>
+            </div>
             </div>
          @endforeach
       </div>

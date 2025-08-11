@@ -65,22 +65,22 @@
 
                   {{-- Username and Logout side by side --}}
                   @auth
-                     <ul class="navbar-nav ml-auto align-items-center">
-                        <li class="nav-item">
-                           <span class="nav-link" style="color: #000; cursor: default;">
-                              {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
-                           </span>
-                        </li>
-                        <li class="nav-item">
-                           <form method="POST" action="{{ route('logout') }}">
-                              @csrf
-                              <button type="submit" class="btn btn-link nav-link" style="padding: 0; color: #000; text-decoration: underline; cursor: pointer;">
-                                 Déconnexion
-                              </button>
-                           </form>
-                        </li>
-                     </ul>
-                  @endauth
+    <ul class="navbar-nav ml-auto align-items-center">
+        <li class="nav-item">
+            <a href="{{ route('profile.edit') }}" class="nav-link" style="color: #000; text-decoration: underline;">
+                {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-link nav-link" style="padding: 0; color: #000; text-decoration: underline; cursor: pointer;">
+                    Déconnexion
+                </button>
+            </form>
+        </li>
+    </ul>
+@endauth
                </div>
             </nav>
          </div>

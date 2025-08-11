@@ -23,10 +23,11 @@
             <thead>
                 <tr>
                     <th>Événement</th>
-                    <th>Date</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
                     <th>Lieu</th>
                     <th>Statut</th>
-                    <th>QR Code</th>
+
                     @if($hasPending)
                         <th>Action</th>
                     @endif
@@ -36,16 +37,10 @@
                 @foreach($reservations as $reservation)
                     <tr>
                         <td>{{ $reservation->event->titre }}</td>
-                        <td>{{ \Carbon\Carbon::parse($reservation->event->date)->format('d/m/Y H:i') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($reservation->event->date_debut)->format('d/m/Y H:i') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($reservation->event->date_fin)->format('d/m/Y H:i') }}</td>
                         <td>{{ $reservation->event->lieu }}</td>
-                        <td>{{ $reservation->statut }}</td>
-                        <td>
-                            @if($reservation->notification && $reservation->notification->qr_code_path)
-                                <img src="{{ asset('storage/' . $reservation->notification->qr_code_path) }}" alt="QR Code" width="100" height="100" />
-                            @else
-                                <span>Pas de QR code</span>
-                            @endif
-                        </td>
+                        <td>{{ ucfirst($reservation->statut) }}</td>
 
                         {{-- Colonne Action affichée uniquement si $hasPending --}}
                         @if($hasPending)
@@ -57,7 +52,7 @@
                                         <button type="submit" class="btn btn-danger btn-sm">Annuler</button>
                                     </form>
                                 @else
-                                    {{-- Pour les autres statuts on ne met rien (cellule vide) --}}
+                                    {{-- Cellule vide pour autres statuts --}}
                                 @endif
                             </td>
                         @endif

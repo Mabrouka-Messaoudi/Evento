@@ -45,13 +45,7 @@
                 <input type="number" name="capacite" class="form-control" value="{{ old('capacite', $event->capacite) }}" required>
             </div>
 
-            <div class="mb-3">
-                <label for="statut" class="form-label">Statut</label>
-                <select name="statut" class="form-control" required>
-                    <option value="publié" {{ old('statut', $event->statut) == 'publié' ? 'selected' : '' }}>Publié</option>
-                    <option value="brouillon" {{ old('statut', $event->statut) == 'brouillon' ? 'selected' : '' }}>Brouillon</option>
-                </select>
-            </div>
+
 
             <div class="mb-3">
                 <label for="image" class="form-label">Image (laisser vide pour garder l'actuelle)</label>

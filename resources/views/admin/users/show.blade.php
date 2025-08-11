@@ -10,7 +10,7 @@
         <p><strong>Nom :</strong> {{ $user->nom }}</p>
 
 
-        <a href="{{ route('admin.users.show') }}" class="inline-block mt-4 text-blue-600 hover:underline">Retour à la liste</a>
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-info">Retoutre a la liste</a>
     </div>
 </div>
 @endsection
