@@ -32,6 +32,7 @@ jobs:
 
     - name: Deploy to Minikube
       run: |
+        ssh -i github_actions_key vboxuser@127.0.0.1 -p 2222
         kubectl config use-context test-cluster
         # Use Minikube's Docker daemon
         eval $(minikube -p test-cluster docker-env)
