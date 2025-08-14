@@ -10,10 +10,13 @@ use App\Http\Controllers\AvisController;
 use App\Models\Event;
 use Carbon\Carbon;
 use App\Models\Reservation;
+
+
+
 // Default home page
 Route::get('/', [EventController::class, 'home'])->name('home');
 
-// Dashboard (generic fallback)
+// Dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
