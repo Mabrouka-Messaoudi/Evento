@@ -42,7 +42,7 @@ jobs:
 
     - name: Deploy to Minikube
       run: |
-        ssh -o StrictHostKeyChecking=no -i github_actions_key vboxuser@102.171.59.29 -p 2222 "
+        ssh -o StrictHostKeyChecking=no -i github_actions_key vboxuser@192.168.1.50 "
           kubectl config use-context test-cluster &&
           eval \$(minikube -p test-cluster docker-env) &&
           kubectl apply -f k8s/namespace.yaml &&
