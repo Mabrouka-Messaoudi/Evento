@@ -72,10 +72,15 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      */
-   public function show($id)
+   public function show($id, $viewType = 'participant')
 {
-    $event = Event::findOrFail($id);
-    return view('participant.details', compact('event'));
+    $event = Event::with('avis.user')->findOrFail($id);
+
+    if ($viewType === 'organisateur') {
+        return view('organisateur.event_show', ['event' => $event]);
+    }
+
+    return view('participant.details', ['event' => $event]);
 }
 
 

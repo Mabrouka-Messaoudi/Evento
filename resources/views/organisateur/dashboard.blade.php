@@ -1,6 +1,60 @@
 @extends('organisateur.base')
 @section('content')
+<style>
+/* Styles personnalisés pour les boutons */
+.btn-custom-red {
+    background-color: #e74c3c; /* rouge vif */
+    color: #fff;
+    border: 2px solid #c0392b;
+    font-weight: bold;
+    border-radius: 12px; /* arrondi */
+    padding: 10px 15px;
+    transition: 0.3s;
+}
 
+.btn-custom-red:hover {
+    background-color: #c0392b;
+    color: #fff;
+}
+
+.btn-custom-black {
+    background-color: #2c3e50; /* noir/gris foncé */
+    color: #fff;
+    border: 2px solid #000;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.btn-custom-black:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+.btn-custom-white {
+    background-color: #fff; /* blanc */
+    color: #2c3e50;
+    border: 2px solid #2c3e50;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.btn-custom-white:hover {
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+/* Conteneur pour espacer les boutons */
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* espace entre les boutons */
+    max-width: 250px; /* largeur uniforme */
+}
+</style>
 <div class="our_room">
   <div class="container">
     <!-- Section Mes Événements -->
@@ -42,15 +96,22 @@
               <p><strong>Capacité:</strong> {{ $event->capacite }}</p>
               <p><strong>Catégorie:</strong> {{ $event->categorie->nom ?? 'N/A' }}</p>
 
-              <form action="{{ route('organisateur.events.edit', $event->id) }}" method="GET" class="mb-2">
-                <button type="submit" class="btn btn-primary btn-sm w-100">Modifier</button>
-              </form>
+              <div class="btn-container">
+    <form action="{{ route('organisateur.events.edit', $event->id) }}" method="GET">
+        <button type="submit" class="btn btn-custom-white btn-sm w-100">Modifier</button>
+    </form>
 
-              <form action="{{ route('organisateur.events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('Supprimer cet événement ?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger btn-sm w-100">Supprimer</button>
-              </form>
+    <form action="{{ route('organisateur.events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('Supprimer cet événement ?');">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-custom-red btn-sm w-100">Supprimer</button>
+    </form>
+
+    <a href="{{ route('events.show', ['id' => $event->id, 'viewType' => 'organisateur']) }}" class="btn btn-custom-black btn-sm w-100">
+        Voir les avis
+    </a>
+</div>
+
             </div>
           </div>
         @endforeach

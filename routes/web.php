@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\AvisController;
 use App\Models\Event;
 use Carbon\Carbon;
 use App\Models\Reservation;
@@ -43,7 +44,10 @@ Route::middleware(['auth'])->group(function () {
          $events = Event::all();
         return view('participant.dashboard', ['events' => $events]);
     })->name('participant.dashboard');
-   Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+Route::get('/events/{id}/{viewType?}', [EventController::class, 'show'])
+    ->name('events.show')
+    ->where('viewType', 'participant|organisateur')
+    ->defaults('viewType', 'participant');
    Route::post('/reservations/{event}', [ReservationController::class, 'store'])->name('reservations.store');
    Route::patch('/reservations/{id}', [ReservationController::class, 'update'])->name('reservation.update');
 
@@ -75,6 +79,7 @@ Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users
     return view('home.nav-events', ['events' => $events]);
 })->name('home.nav-events');
 Route::get('/participant/dashboard', [EventController::class, 'events'])->name('participant.dashboard');
+Route::post('/evenements/{id}/avis', [AvisController::class, 'store'])->name('avis.store');
 
     // Organisateur Dashboard (Create Event Page)
     // Route::get('/organisateur/dashboard',function(){
