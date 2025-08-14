@@ -51,4 +51,3 @@ jobs:
         kubectl rollout status deployment/mysql
         kubectl rollout status deployment/laravel
         kubectl rollout status deployment/nginx 
-is this true 
