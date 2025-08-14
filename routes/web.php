@@ -20,7 +20,6 @@ Route::get('/dashboard', function () {
 
 // Role-based dashboards — used in AuthenticatedSessionController
 Route::middleware(['auth'])->group(function () {
-
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::post('/admin/categories', [AdminController::class, 'store'])->name('admin.categories.store');
