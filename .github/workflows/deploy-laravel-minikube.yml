@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted   
 
     steps:
     - name: Checkout repository
@@ -30,31 +30,27 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/evento:v4
 
-    - name: SSH into VM and deploy
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: ${{ secrets.VM_IP }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_SSH_KEY }}
-        script: |
-          ssh-keyscan -H ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
-          kubectl config use-context test-cluster
+    - name: Deploy to Minikube
+      run: |
+        kubectl config use-context test-cluster
+        # Use Minikube's Docker daemon
+        eval $(minikube -p test-cluster docker-env)
 
-          # Use Minikube's Docker daemon
-          eval $(minikube -p test-cluster docker-env)
+        # Apply MySQL PVC and Deployment
+        kubectl apply -f k8s/namespace.yaml
+        kubectl apply -f k8s/mysql-secret.yaml
+        kubectl apply -f k8s/mysql-pvc.yaml
+        kubectl apply -f k8s/mysql-deployment.yaml
 
-          # Apply MySQL PVC and Deployment
-          kubectl apply -f k8s/namespace
-          kubectl apply -f k8s/mysql-secret
-          kubectl apply -f k8s/mysql-pvc.yaml
-          kubectl apply -f k8s/mysql-deployment.yaml
-          
+        # Apply Laravel Deployment
+        kubectl apply -f k8s/laravel-pvc.yaml 
+        kubectl apply -f k8s/laravel-deployment.yaml
 
-          # Apply Laravel Deployment
-          kubectl apply -f k8s/laravel-pvc.yaml 
-          kubectl apply -f k8s/laravel-deployment.yaml
+        # Apply Nginx PVC and Deployment
+        kubectl apply -f k8s/nginx-pvc.yaml
+        kubectl apply -f k8s/nginx-deployment.yaml
 
-          # Apply Nginx PVC and Deployment
-          kubectl apply -f k8s/nginx-deployment.yaml
-
-          
+        # Wait for pods to be ready
+        kubectl rollout status deployment/mysql
+        kubectl rollout status deployment/laravel
+        kubectl rollout status deployment/nginx
