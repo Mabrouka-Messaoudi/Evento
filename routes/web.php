@@ -43,10 +43,10 @@ Route::middleware(['auth'])->group(function () {
     ->middleware('auth')
     ->name('organisateur.reservations.gestion');
 
-    Route::get('/participant/dashboard', function () {
-         $events = Event::all();
-        return view('participant.dashboard', ['events' => $events]);
-    })->name('participant.dashboard');
+    // Route::get('/participant/dashboard', function () {
+    //      $events = Event::all();
+    //     return view('participant.dashboard', ['events' => $events]);
+    // })->name('participant.dashboard');
 Route::get('/events/{id}/{viewType?}', [EventController::class, 'show'])
     ->name('events.show')
     ->where('viewType', 'participant|organisateur')
@@ -83,7 +83,7 @@ Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users
     $events = Event::where('date_debut', '>=', $today)->get();
     return view('home.nav-events', ['events' => $events]);
 })->name('home.nav-events');
-Route::get('/participant/dashboard', [EventController::class, 'events'])->name('participant.dashboard');
+//Route::get('/participant/dashboard', [EventController::class, 'events'])->name('participant.dashboard');
 Route::post('/evenements/{id}/avis', [AvisController::class, 'store'])->name('avis.store');
 
     // Organisateur Dashboard (Create Event Page)
@@ -107,7 +107,18 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/favoris/{event}', [FavoriController::class, 'store'])->name('favoris.store');
     Route::delete('/favoris/{event}', [FavoriController::class, 'destroy'])->name('favoris.destroy');
 });
+Route::get('/admin/dashboard', [AdminController::class, 'adminDashboard'])
+    ->name('admin.dashboard')
+    ->middleware('auth');
 
+// Organisateur dashboard
+Route::get('/organisateur/dashboard',[EventController::class, 'index'])
+->name('organisateur.dashboard')
+->middleware('auth');
+
+// Participant dashboard
+Route::get('/participant/dashboard',[EventController::class, 'events'])
+->name('participant.dashboard')->middleware('auth');
 
 // Load auth routes
 require __DIR__.'/auth.php';

@@ -3,6 +3,7 @@
 
 @section('content')
 <div class="main-content">
+
     {{-- Success Message --}}
     @if (session('success'))
         <div class="alert alert-success mb-4">
@@ -11,94 +12,112 @@
     @endif
 
     <!-- Gestion des Catégories -->
-    <section id="categories" class="mb-5">
-        <h3 class="mb-3">Gestion des Catégories</h3>
+    <div class="content-card" id="categories">
+        <h1>Gestion des Catégories</h1>
 
         <!-- Formulaire d'ajout -->
-        <div class="card p-3 mb-4 shadow-sm">
-            <form action="{{ route('admin.categories.store') }}" method="POST" class="row g-2 align-items-center">
+        <div class="form-container">
+            <form action="{{ route('admin.categories.store') }}" method="POST" class="d-flex gap-2 w-100">
                 @csrf
-                <div class="col-md-8">
-                    <input type="text" name="nom" class="form-control" placeholder="Nom de la catégorie" required>
-                </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary w-100">Ajouter Catégorie</button>
-                </div>
+                <input type="text" name="nom" class="form-control" placeholder="Nom de la catégorie" required>
+                <button type="submit" class="btn-add">
+                    <i class="fas fa-plus"></i> Ajouter Catégorie
+                </button>
             </form>
         </div>
 
         <!-- Liste des catégories -->
-        <div class="card p-3 shadow-sm">
-            @if($categories->isEmpty())
-                <p class="text-muted m-0">Aucune catégorie trouvée.</p>
-            @else
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-light">
+        <div class="table-responsive">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($categories as $categorie)
                         <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th class="text-center" colspan="2">Actions</th>
+                            <td>{{ $categorie->id }}</td>
+                            <td>{{ $categorie->nom }}</td>
+                            <td>
+                                <a href="{{ route('admin.categories.edit', $categorie->id) }}" class="btn-edit">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <form action="{{ route('admin.categories.destroy', $categorie->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Supprimer cette catégorie ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-delete">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($categories as $categorie)
-                            <tr>
-                                <td>{{ $categorie->id }}</td>
-                                <td>{{ $categorie->nom }}</td>
-                                <td class="text-center">
-                                    <a href="{{ route('admin.categories.edit', $categorie->id) }}" class="btn btn-sm btn-warning">Modifier</a>
-                                </td>
-                                <td class="text-center">
-                                    <form action="{{ route('admin.categories.destroy', $categorie->id) }}" method="POST" onsubmit="return confirm('Supprimer cette catégorie ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Aucune catégorie trouvée.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
 
     <!-- Gestion des Utilisateurs -->
-    <section id="users">
-        <h3 class="mb-3">Utilisateurs</h3>
-        <div class="card p-3 shadow-sm">
-            @if($users->isEmpty())
-                <p class="text-muted m-0">Aucun utilisateur trouvé.</p>
-            @else
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-light">
+    <div class="content-card" id="users">
+        <h1>Utilisateurs</h1>
+        <div class="table-responsive">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom Complet</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($users as $user)
                         <tr>
-                            <th>ID</th>
-                            <th>Nom Complet</th>
-                            <th>Email</th>
-                            <th class="text-center">Actions</th>
+                            <td>{{ $user->id }}</td>
+                            <td>{{ $user->prenom }} {{ $user->nom }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                <a href="{{ route('admin.users.show', ['user' => $user->id]) }}" class="btn-edit">
+                                    <i class="fas fa-eye"></i> Voir
+                                </a>
+                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-delete">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                            <tr>
-                                <td>{{ $user->id }}</td>
-                                <td>{{ $user->prenom }} {{ $user->nom }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td class="text-center">
-                                <a href="{{ route('admin.users.show', ['user' => $user->id]) }}" class="btn btn-sm btn-info">Voir</a>
-                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?');" style="display:inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">Aucun utilisateur trouvé.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
 </div>
+
+<!-- Keep your original JS -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to sidebar items
+    document.querySelectorAll('.sidebar .nav-item a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar .nav-item a').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+});
+</script>
 @endsection

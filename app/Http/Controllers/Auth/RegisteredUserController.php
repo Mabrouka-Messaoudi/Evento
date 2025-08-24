@@ -59,7 +59,7 @@ class RegisteredUserController extends Controller
 } elseif ($user->role === 'organisateur') {
     return redirect('/organisateur/dashboard');
 } else {
-    return redirect('/dashboard');
+    return redirect('/admin/dashboard');
 }
 
 }
