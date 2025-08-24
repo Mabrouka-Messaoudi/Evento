@@ -52,6 +52,11 @@ class User extends Authenticatable
     public function events() {
     return $this->hasMany(Event::class, 'organisateur_id');
 }
+public function favoris()
+{
+    return $this->hasMany(Favori::class);
+}
+
 
 public function reservations() {
     return $this->hasMany(Reservation::class, 'participant_id');

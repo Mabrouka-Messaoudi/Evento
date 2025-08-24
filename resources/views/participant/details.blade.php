@@ -3,30 +3,45 @@
 @section('content')
 <div class="container mt-5">
 
-    <!-- Titre -->
-    <h2 class="mb-4 text-center">{{ $event->titre }}</h2>
-
-    <!-- Image de l'événement -->
-    <div class="text-center mb-4">
+    <div class="row mb-4">
+    <!-- Image à gauche -->
+    <div class="col-md-4 text-center">
         <img src="{{ asset('storage/' . $event->image) }}"
              class="img-fluid rounded shadow-sm"
              alt="{{ $event->titre }}"
-             style="max-height: 400px; object-fit: cover;">
+             style="max-height: 300px; object-fit: cover;">
     </div>
 
-    <!-- Informations principales -->
-    <div class="card p-4 shadow-sm">
-        <p><strong>Date :</strong> {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y H:i') }}</p>
+    <!-- Informations à droite -->
+    <div class="col-md-8">
+        <h2 class="d-flex justify-content-between align-items-center">
+            {{ $event->titre }}
+
+            <!-- Étoile Favoris -->
+            <form action="{{ route('favoris.toggle', $event->id) }}" method="POST" id="favori-form" style="margin:0;">
+                @csrf
+                <div class="favori-star" title="{{ Auth::user()->favoris->where('event_id', $event->id)->count() ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                    <input type="radio" id="favori" name="favori"
+                           {{ Auth::user()->favoris->where('event_id', $event->id)->count() ? 'checked' : '' }} required>
+                    <label for="favori">&#9733;</label>
+                </div>
+            </form>
+        </h2>
+
+        <p><strong>Date de début :</strong> {{ \Carbon\Carbon::parse($event->date_debut)->format('d/m/Y H:i') }}</p>
+        <p><strong>Date de fin :</strong> {{ \Carbon\Carbon::parse($event->date_fin)->format('d/m/Y H:i') }}</p>
         <p><strong>Lieu :</strong> {{ $event->lieu }}</p>
         <p><strong>Capacité :</strong> {{ $event->capacite }} personnes</p>
         <p><strong>Description :</strong></p>
         <p>{{ $event->description }}</p>
 
-        <!-- Bouton participer -->
-        <form action="{{ route('reservations.store', $event->id) }}" method="POST" class="mb-4">
+        <!-- Bouton Participer -->
+        <form action="{{ route('reservations.store', $event->id) }}" method="POST" class="mb-2">
             @csrf
             <button class="btn btn-outline-dark">Participer</button>
         </form>
+    </div>
+</div>
 
         <!-- Formulaire Avis -->
 <h5 class="mt-4">Donner votre avis</h5>
@@ -76,6 +91,32 @@
 
 
 <style>
+    .favori-star {
+    display: inline-flex;
+    flex-direction: row-reverse;
+}
+
+.favori-star input[type="radio"] {
+    display: none;
+}
+
+.favori-star label {
+    font-size: 2rem;
+    color: lightgray;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+/* Hover */
+.favori-star label:hover,
+.favori-star label:hover ~ label {
+    color: gold;
+}
+
+/* Si en favoris (checked) */
+.favori-star input[type="radio"]:checked ~ label {
+    color: gold;
+}
     /* Conteneur étoiles */
     .stars {
         display: flex;
@@ -106,5 +147,21 @@
         color: gold;
     }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const favoriLabel = document.querySelector('.favori-star label');
+    const favoriInput = document.querySelector('.favori-star input');
+    const favoriForm  = document.getElementById('favori-form');
+
+    favoriLabel.addEventListener('click', function() {
+        // Toggle l'état checked pour CSS
+        favoriInput.checked = !favoriInput.checked;
+        // soumet le formulaire pour ajouter ou retirer le favori
+        favoriForm.submit();
+    });
+});
+</script>
+
+
 
 @endsection

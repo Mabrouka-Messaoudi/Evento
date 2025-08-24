@@ -25,6 +25,11 @@ public function organisateur() {
 public function categorie() {
     return $this->belongsTo(Category::class, 'categorie_id');
 }
+public function favoris()
+{
+    return $this->hasMany(Favori::class);
+}
+
 
 public function reservations() {
     return $this->hasMany(Reservation::class);

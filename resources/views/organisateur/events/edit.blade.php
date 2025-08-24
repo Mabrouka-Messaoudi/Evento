@@ -30,9 +30,18 @@
                 <textarea name="description" class="form-control" rows="4" required>{{ old('description', $event->description) }}</textarea>
             </div>
 
+            <!-- Date début -->
             <div class="mb-3">
-                <label for="date" class="form-label">Date</label>
-                <input type="datetime-local" name="date" class="form-control" value="{{ \Carbon\Carbon::parse($event->date)->format('Y-m-d\TH:i') }}" required>
+                <label for="date_debut" class="form-label">Date de début</label>
+                <input type="datetime-local" id="date_debut" name="date_debut" class="form-control"
+                       value="{{ old('date_debut', \Carbon\Carbon::parse($event->date_debut)->format('Y-m-d\TH:i')) }}" required>
+            </div>
+
+            <!-- Date fin -->
+            <div class="mb-3">
+                <label for="date_fin" class="form-label">Date de fin</label>
+                <input type="datetime-local" id="date_fin" name="date_fin" class="form-control"
+                       value="{{ old('date_fin', \Carbon\Carbon::parse($event->date_fin)->format('Y-m-d\TH:i')) }}" required>
             </div>
 
             <div class="mb-3">
@@ -44,8 +53,6 @@
                 <label for="capacite" class="form-label">Capacité</label>
                 <input type="number" name="capacite" class="form-control" value="{{ old('capacite', $event->capacite) }}" required>
             </div>
-
-
 
             <div class="mb-3">
                 <label for="image" class="form-label">Image (laisser vide pour garder l'actuelle)</label>

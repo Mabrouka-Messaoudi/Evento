@@ -6,16 +6,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\AvisController;
 use App\Models\Event;
 use Carbon\Carbon;
 use App\Models\Reservation;
+use App\Http\Controllers\FavoriController;
 
 
 
 // Default home page
 Route::get('/', [EventController::class, 'home'])->name('home');
-
 // Dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -52,7 +53,9 @@ Route::get('/events/{id}/{viewType?}', [EventController::class, 'show'])
     ->defaults('viewType', 'participant');
    Route::post('/reservations/{event}', [ReservationController::class, 'store'])->name('reservations.store');
    Route::patch('/reservations/{id}', [ReservationController::class, 'update'])->name('reservation.update');
-
+   Route::post('/favoris/toggle/{event}', [FavoriController::class, 'toggle'])
+    ->name('favoris.toggle')
+    ->middleware('auth');
     // Participant Dashboard
 
 
@@ -97,6 +100,14 @@ Route::middleware('auth')->delete('/reservations/{id}', [ReservationController::
 Route::middleware('auth')->group(function () {
     Route::get('/participant/notifications', [NotificationController::class, 'index'])->name('participant.notifications.index');
 });
+Route::post('/chatbot', [ChatbotController::class, 'handle']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/participant/favoris', [FavoriController::class, 'index'])->name('participant.favoris.index');
+    Route::post('/favoris/{event}', [FavoriController::class, 'store'])->name('favoris.store');
+    Route::delete('/favoris/{event}', [FavoriController::class, 'destroy'])->name('favoris.destroy');
+});
+
 
 // Load auth routes
 require __DIR__.'/auth.php';

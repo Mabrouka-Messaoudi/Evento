@@ -47,9 +47,14 @@
             width: 250px;
             background-color: #1b1b18;
             color: white;
+
             padding: 20px;
             height: 100vh;
+
             position: fixed;
+            z-index: 1000;
+
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .sidebar h2 {
             margin-bottom: 30px;
@@ -71,11 +76,15 @@
         .main-content {
             margin-left: 270px; /* pour laisser la place à la sidebar */
             padding: 20px;
+            margin-top: 80px;
         }
+
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="main-layout">
+    <header>
     @include('home.header')
+    </header>
     <!-- Sidebar fixed -->
     <div class="sidebar">
     <h2>
@@ -84,7 +93,9 @@
     <a href="{{ route('participant.dashboard') }}">Les Événements</a>
     <a href="{{ route('participant.reservations.historique') }}">Mes Réservations</a>
     <a href="{{ route('participant.notifications.index') }}">Notifications</a>
+    <a href="{{ route('participant.favoris.index') }}">Mes Favoris</a>
 </div>
+
 
 
 
